@@ -1,6 +1,6 @@
 # Chronic Kidney Disease Screening - all notebook cells
 
-This file has all 71 cells of the notebook in order: 38 text cells and 33 code cells.
+This file has all 74 cells of the notebook in order: 40 text cells and 34 code cells.
 
 How to use it on Kaggle:
 
@@ -36,7 +36,11 @@ https://archive.ics.uci.edu/dataset/336/chronic+kidney+disease
 ## Cell 2 - Text (Markdown)
 
 ````markdown
-# 1. About the Dataset
+# Task 2: Applying AI Algorithms and Machine Learning Techniques
+
+## Q3. Explore and preprocess the dataset
+
+### 3.1 About the dataset
 
 The dataset has the blood and urine test results of 400 patients. One row is one patient.
 
@@ -79,7 +83,7 @@ The dataset has the blood and urine test results of 400 patients. One row is one
 ## Cell 3 - Text (Markdown)
 
 ````markdown
-# 2. Dataset Exploration (Q3)
+### 3.2 Import the libraries
 
 First I import the libraries.
 ````
@@ -119,6 +123,8 @@ sns.set_theme(style="whitegrid")
 ## Cell 5 - Text (Markdown)
 
 ````markdown
+### 3.3 Load the dataset
+
 Now I load the dataset and see the first 5 rows.
 
 The code first looks for the file on my own computer. On Kaggle it looks inside the `/kaggle/input` folder. If the file is not found in both places, it reads the same file from the UCI website, so the notebook runs without any change.
@@ -154,7 +160,7 @@ df.head()
 ````markdown
 One row is one patient. I can already see `NaN` in the first rows, so the dataset has missing values.
 
-### Dataset shape and data types
+### 3.4 Dataset shape and data types
 ````
 
 ---
@@ -173,7 +179,7 @@ df.info()
 ````markdown
 The dataset has 400 rows and 25 columns: 24 features and the `class` column. 14 columns are numbers and 11 columns are text. Every feature has fewer than 400 non-null values, so every feature has some missing values.
 
-### Summary statistics
+### 3.5 Summary statistics (feature summary table)
 ````
 
 ---
@@ -198,9 +204,7 @@ The average age is about 51 years and the patients are from 2 to 90 years old. T
 ## Cell 12 - Text (Markdown)
 
 ````markdown
-# 3. Data Cleaning and Preprocessing (Q3)
-
-## 3.1 Clean the text values
+### 3.6 Clean the text values
 
 Some text values have a hidden tab character (for example `"ckd\t"` and `"\tno"`). Because of this the same answer looks like two different values. `str.strip()` removes the extra spaces and tabs.
 
@@ -232,7 +236,7 @@ print("After cleaning :", df["class"].unique())
 ````markdown
 Before cleaning, the `class` column had three values because one of them had a hidden tab. Now it has only the two correct values: `ckd` and `notckd`.
 
-## 3.2 Handle missing values and duplicates
+### 3.7 Handle missing values and duplicates
 ````
 
 ---
@@ -298,7 +302,7 @@ print("Missing values left:", df.isnull().sum().sum())
 ````markdown
 Now there are 0 missing values. I used the median for the number columns because it does not change much with very high values like serum creatinine 76.
 
-## 3.3 Create the target
+### 3.8 Create the target
 
 The `class` column is text. I change it to numbers: 1 = chronic kidney disease (ckd), 0 = no chronic kidney disease (notckd).
 ````
@@ -329,9 +333,7 @@ df["target"].value_counts()
 ## Cell 22 - Text (Markdown)
 
 ````markdown
-# 4. Data Visualization (Q3)
-
-## 4.1 Class distribution
+### 3.9 Chart 1: Class distribution
 ````
 
 ---
@@ -355,7 +357,7 @@ plt.show()
 ````markdown
 The two classes are not equal. There are more kidney disease patients (250) than patients without it (150). A model that says "kidney disease" for everyone would already get 62.5% accuracy. So I do not look only at accuracy. I also use precision, recall, F1-score and ROC-AUC.
 
-## 4.2 Correlation heatmap
+### 3.10 Chart 2: Correlation heatmap
 
 Correlation is a number between -1 and +1. Near +1 means two columns go up together. Near -1 means one goes up when the other goes down. Near 0 means no relation.
 ````
@@ -388,7 +390,7 @@ df.corr(numeric_only=True)["target"].drop("target").sort_values(ascending=False)
 ````markdown
 Hemoglobin (-0.73), packed cell volume (-0.67), specific gravity (-0.66) and red blood cell count (-0.57) have a strong negative correlation with the target. This means lower values go with kidney disease. Albumin (+0.53) has the strongest positive correlation. Potassium (+0.07) is almost not related to the target.
 
-## 4.3 Hemoglobin and serum creatinine by target
+### 3.11 Chart 3: Hemoglobin and serum creatinine by target
 ````
 
 ---
@@ -430,9 +432,7 @@ Kidney disease patients have lower hemoglobin (11.02 against 15.09) and much hig
 ## Cell 31 - Text (Markdown)
 
 ````markdown
-# 5. Encode, Split and Scale (Q3)
-
-## 5.1 Encode the text columns
+### 3.12 Encode the text columns
 
 A model can work only with numbers, so I change the text columns to 0/1 columns with one-hot encoding. Every text column has only two values (for example yes and no), so one 0/1 column is enough for each. That is why I use `drop_first=True`.
 ````
@@ -477,7 +477,7 @@ print("y shape:", y.shape)
 ## Cell 35 - Text (Markdown)
 
 ````markdown
-## 5.2 Train and test split
+### 3.13 Train and test split
 
 The model learns from the training set. Then I check it on the testing set, which the model has never seen.
 ````
@@ -502,7 +502,7 @@ print("Testing set :", X_test.shape)
 ````markdown
 80% of the data (320 patients) is for training and 20% (80 patients) is for testing. `random_state=42` gives the same split in every run. `stratify=y` keeps the same share of kidney disease patients in both sets.
 
-I keep the real age of the test patients, because I need it in Section 10.
+I keep the real age of the test patients, because I need it in Q10.
 ````
 
 ---
@@ -510,7 +510,7 @@ I keep the real age of the test patients, because I need it in Section 10.
 ## Cell 38 - Code
 
 ```python
-# Keep the original (unscaled) age of the test patients for Section 10
+# Keep the original (unscaled) age of the test patients for Q10
 age_test = X_test["age"]
 ```
 
@@ -519,7 +519,7 @@ age_test = X_test["age"]
 ## Cell 39 - Text (Markdown)
 
 ````markdown
-## 5.3 Scale the features
+### 3.14 Scale the features
 
 StandardScaler makes every feature have mean 0 and standard deviation 1, so all features are treated equally. I fit the scaler only on the training set and then use it on the test set. If the scaler learns from the test set also, information from the test set leaks into training (data leakage).
 ````
@@ -540,7 +540,7 @@ X_test_scaled = scaler.transform(X_test)         # use the same scaler on the te
 ## Cell 41 - Text (Markdown)
 
 ````markdown
-# 6. Build and Train the Models (Q4)
+## Q4. Build and train at least two different models
 
 I train five different models on the same training data:
 - **Logistic Regression:** gives a weight to each feature and makes a probability. Above 0.5 means kidney disease.
@@ -575,7 +575,7 @@ for name, model in models.items():
 ````markdown
 All five models are trained.
 
-## 6.1 Rules of the expert system
+### 4.1 Rules of the expert system
 
 A decision tree is a set of IF-THEN rules. I train the same tree on the unscaled values, so the rules show real medical values (class 1 = kidney disease, class 0 = no kidney disease).
 ````
@@ -609,9 +609,9 @@ A doctor can read and check these rules. This is the main strength of a rule-bas
 ## Cell 46 - Text (Markdown)
 
 ````markdown
-# 7. Model Outputs (Q5)
+## Q5. Run the models and report the outputs
 
-## 7.1 Training accuracy and test accuracy
+### 5.1 Training accuracy and test accuracy
 
 If the training accuracy is much higher than the test accuracy, the model has memorised the training data. This is called overfitting.
 ````
@@ -649,7 +649,7 @@ pd.DataFrame(accuracy_rows).round(3)
 ````markdown
 The training accuracy and the test accuracy are close for every model. The biggest gap is 1.6% (Decision Tree). So I do not see overfitting. All five models get at least 97.5% on the test set.
 
-## 7.2 Confusion matrices
+### 5.2 Confusion matrices
 ````
 
 ---
@@ -691,7 +691,7 @@ Rows are the actual class and columns are the predicted class.
 
 The test set has 80 patients (50 with kidney disease and 30 without). Random Forest makes no mistake. Logistic Regression misses 1 patient. KNN and Naive Bayes miss 2 patients each. Decision Tree misses 1 patient and gives 1 false alarm.
 
-## 7.3 Classification reports
+### 5.3 Classification reports
 ````
 
 ---
@@ -718,7 +718,9 @@ The report gives precision, recall and F1-score for each class. For the CKD clas
 ## Cell 53 - Text (Markdown)
 
 ````markdown
-# 8. Evaluate and Compare the Models (Q6)
+# Task 3: Analyzing and Evaluating AI Model Performance
+
+## Q6. Evaluate and compare the models with metrics
 
 - **Accuracy** = (TP + TN) / all patients
 - **Precision** = TP / (TP + FP)
@@ -787,7 +789,7 @@ For this problem recall is the most important metric, because a missed kidney di
 ## Cell 57 - Text (Markdown)
 
 ````markdown
-# 9. Hyperparameter Tuning (Q7)
+## Q7. Tune two hyperparameters
 
 Random Forest already has a test score of 1.000, so tuning cannot improve it. I tune KNN, because it has the lowest recall and its main hyperparameter is K. I want to see if tuning can bring it close to the best model.
 
@@ -854,7 +856,7 @@ plt.show()
 ````markdown
 The accuracy is highest at K = 1 (0.975) and goes down when K gets bigger. At K = 25 it is only 0.903 with uniform weights. The two weights options give the same result up to K = 13. After that, `distance` is a little better.
 
-Usually a very small K overfits, because one noisy neighbour decides the answer. Here it is different. The two classes are well separated (Section 4.3), so the nearest patient is almost always from the correct class. When K is large, many neighbours vote. Then the healthy patients can outvote the few kidney disease patients who have mild values, and the model becomes too simple (underfitting).
+Usually a very small K overfits, because one noisy neighbour decides the answer. Here it is different. The two classes are well separated (Chart 3 in Q3), so the nearest patient is almost always from the correct class. When K is large, many neighbours vote. Then the healthy patients can outvote the few kidney disease patients who have mild values, and the model becomes too simple (underfitting).
 
 Now I take the best pair.
 ````
@@ -894,7 +896,7 @@ best_knn.fit(X_train_scaled, y_train)
 best_pred = best_knn.predict(X_test_scaled)
 best_prob = best_knn.predict_proba(X_test_scaled)[:, 1]
 
-# The KNN from Section 6 (n_neighbors=5, weights="uniform") for comparison
+# The KNN from Q4 (n_neighbors=5, weights="uniform") for comparison
 default_pred = predictions["KNN"]
 default_prob = models["KNN"].predict_proba(X_test_scaled)[:, 1]
 
@@ -926,7 +928,7 @@ comparison.round(3)
 ````markdown
 After tuning, the test accuracy went up from 0.975 to 0.988 and the recall went up from 0.96 to 0.98. So the tuned KNN misses 1 kidney disease patient, not 2. The precision is still 1.00, so there is no false alarm.
 
-The tuned KNN (0.988) is still below Random Forest (1.000). So Random Forest stays my final model.
+The tuned KNN (0.988) is still below Random Forest (1.000).
 ````
 
 ---
@@ -934,9 +936,21 @@ The tuned KNN (0.988) is still below Random Forest (1.000). So Random Forest sta
 ## Cell 65 - Text (Markdown)
 
 ````markdown
-# 10. Performance Across Groups (Q10)
+## Q8. Strengths, limitations and the most suitable model
 
-I check the final model (Random Forest) separately for younger and older patients. I also show the number of patients in each group, because a score from a small group is less reliable.
+I compare the five models with the results from Q5, Q6 and Q7.
+
+| Model | Strength | Limitation |
+|---|---|---|
+| Random Forest | Best score in every metric, no missed patient | 100 trees are hard to read |
+| Logistic Regression | Simple and gives a probability | Missed 1 kidney disease patient |
+| KNN | Easy idea (similar patients), no false alarm | Lowest recall, and it must keep all patient records |
+| Decision Tree | Its rules are easy to read | 1 missed patient and 1 false alarm |
+| Naive Bayes | Very fast | Lowest recall, and it treats the features as independent |
+
+The main trade-off is accuracy against interpretability. Random Forest is the most accurate but the hardest to explain. Decision Tree is the easiest to explain but makes 2 mistakes. All models train in less than a second on this small dataset, so training time does not decide the choice.
+
+I take the model with the best scores as my final model.
 ````
 
 ---
@@ -944,11 +958,44 @@ I check the final model (Random Forest) separately for younger and older patient
 ## Cell 66 - Code
 
 ```python
-# The final model is the model with the best scores in Section 8
+# The final model is the model with the best scores in Q6
 final_name = "Random Forest"
 final_model = models[final_name]
 final_pred = predictions[final_name]
 
+# Scores of the final model
+results_df[results_df["Model"] == final_name].round(3)
+```
+
+---
+
+## Cell 67 - Text (Markdown)
+
+````markdown
+**I select Random Forest.** It is first in every test metric and first in cross-validation. It is also the only model that did not miss any kidney disease patient, and recall is the most important metric here.
+
+Its limitation is that nobody can read 100 trees. So I explain it in two ways: the decision tree rules in Q4 and the feature importance in Q10.
+````
+
+---
+
+## Cell 68 - Text (Markdown)
+
+````markdown
+# Task 4: Designing a Responsible Intelligent System
+
+## Q10. Performance across groups and explainability
+
+### 10.1 Performance across two groups
+
+I check the final model (Random Forest) separately for younger and older patients. I also show the number of patients in each group, because a score from a small group is less reliable.
+````
+
+---
+
+## Cell 69 - Code
+
+```python
 # One table with the age, the real answer and the prediction of the final model
 test_results = pd.DataFrame({
     "age": age_test,
@@ -977,7 +1024,7 @@ pd.DataFrame(group_results).round(3)
 
 ---
 
-## Cell 67 - Text (Markdown)
+## Cell 70 - Text (Markdown)
 
 ````markdown
 Random Forest is correct for every test patient in both groups, so I see no difference between younger and older patients.
@@ -989,17 +1036,17 @@ The dataset has no sex column, so I cannot check the model for men and women.
 
 ---
 
-## Cell 68 - Text (Markdown)
+## Cell 71 - Text (Markdown)
 
 ````markdown
-# 11. Explainability: Feature Importance (Q10)
+### 10.2 Explainability: feature importance
 
 A Random Forest has a built-in feature importance. It shows how much each feature helps the trees to separate the two classes. The values add up to 1.
 ````
 
 ---
 
-## Cell 69 - Code
+## Cell 72 - Code
 
 ```python
 # Feature importance of the final model (Random Forest)
@@ -1012,7 +1059,7 @@ feature_importance.round(3)
 
 ---
 
-## Cell 70 - Code
+## Cell 73 - Code
 
 ```python
 # Feature importance chart
@@ -1026,12 +1073,12 @@ plt.show()
 
 ---
 
-## Cell 71 - Text (Markdown)
+## Cell 74 - Text (Markdown)
 
 ````markdown
 The five most important features are hemoglobin (0.214), packed cell volume (0.174), red blood cell count (0.126), serum creatinine (0.109) and specific gravity (0.108). Together they have about 73% of the importance.
 
-These features make sense medically. Serum creatinine and specific gravity show how well the kidneys work, and the three blood values show the anemia that kidney disease causes. They are also the features with the strongest correlation in Section 4.2, and the decision tree uses hemoglobin, red blood cell count and specific gravity in its rules. So three different checks agree.
+These features make sense medically. Serum creatinine and specific gravity show how well the kidneys work, and the three blood values show the anemia that kidney disease causes. They are also the features with the strongest correlation in Chart 2 of Q3, and the decision tree uses hemoglobin, red blood cell count and specific gravity in its rules. So three different checks agree.
 
 Age has an importance of only 0.009, so the model does not decide from the age of the patient.
 ````
